@@ -17,7 +17,7 @@
     <description>service-util</description>
     <dependencies>
 <!--        <dependency>-->
-<!--            <groupId>com.shangxitong.yygh</groupId>-->
+<!--            <groupId>com.shangxitong</groupId>-->
 <!--            <artifactId>common-util</artifactId>-->
 <!--            <version>1.0</version>-->
 <!--        </dependency>-->

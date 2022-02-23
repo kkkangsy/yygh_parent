@@ -14,15 +14,16 @@
     <version>1.0</version>
     <modules>
         <module>service_user</module>
+        <module>service_hosp</module>
     </modules>
     <dependencies>
 <!--        <dependency>-->
-<!--            <groupId>com.shangyitong.yygh_parent</groupId>-->
+<!--            <groupId>com.shangyitong</groupId>-->
 <!--            <artifactId>service-util</artifactId>-->
 <!--            <version>1.0</version>-->
 <!--        </dependency>-->
 <!--        <dependency>-->
-<!--            <groupId>com.shangyitong.yygh_parent</groupId>-->
+<!--            <groupId>com.shangyitong</groupId>-->
 <!--            <artifactId>model</artifactId>-->
 <!--            <version>1.0</version>-->
 <!--        </dependency>-->
