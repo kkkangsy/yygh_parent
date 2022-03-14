@@ -19,6 +19,7 @@ import java.util.Random;
 @Api(tags = "医院设置管理")
 @RestController
 @RequestMapping("/admin/hosp/hospitalSet")
+@CrossOrigin(allowCredentials = "true")
 public class HospitalSetController {
 
     @Autowired
@@ -46,6 +47,7 @@ public class HospitalSetController {
     }
 
     //3 条件查询，带分页
+    @ApiOperation(value = "带分页条件查询医院设置")
     @PostMapping("findPageHospSet/{current}/{limit}")
     public Result findPageHospSet(@PathVariable("current") long current, @PathVariable("limit") long limit,
                                   @RequestBody(required = false) HospitalSetQueryVo hospitalSetQueryVo){
@@ -74,6 +76,7 @@ public class HospitalSetController {
 
 
     //添加医院设置
+    @ApiOperation(value = "添加医院设置")
     @PostMapping("saveHospitalSet")
     public Result saveHospitalSet(@RequestBody HospitalSet hospitalSet){
         hospitalSet.setStatus(1);
@@ -91,6 +94,7 @@ public class HospitalSetController {
     }
 
     //根据id获取医院设置
+    @ApiOperation(value = "根据id获取医院设置")
     @GetMapping("getHospSet/{id}")
     public Result getHospSet(@PathVariable("id") long id){
         HospitalSet hospitalSet = hospitalSetService.getById(id);
@@ -98,6 +102,7 @@ public class HospitalSetController {
     }
 
     //修改医院设置
+    @ApiOperation(value = "修改医院设置")
     @PostMapping("updateHospSet")
     public Result updateHospSet(@RequestBody HospitalSet hospitalSet){
         boolean flag = hospitalSetService.updateById(hospitalSet);
@@ -109,6 +114,7 @@ public class HospitalSetController {
     }
 
     //批量删除医院设置
+    @ApiOperation(value = "批量删除医院设置")
     @DeleteMapping("batchRemoveHospitalSet")
     public Result batchRemoveHospitalSet(@RequestBody List<String> idList){
         hospitalSetService.removeByIds(idList);
@@ -116,7 +122,8 @@ public class HospitalSetController {
     }
 
     //医院设置锁定和解锁
-    @PutMapping("lockHosspitalSet/{id}/{status}")
+    @ApiOperation(value = "医院设置锁定和解锁")
+    @PutMapping("lockHospitalSet/{id}/{status}")
     public Result lockHosspitalSet(@PathVariable("id") long id, @PathVariable("status") Integer status){
         //根据id查询医院设置信息
         HospitalSet hosp = hospitalSetService.getById(id);
