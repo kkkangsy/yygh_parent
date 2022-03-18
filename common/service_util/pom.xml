@@ -16,11 +16,13 @@
     <name>service-util</name>
     <description>service-util</description>
     <dependencies>
-<!--        <dependency>-->
-<!--            <groupId>com.shangxitong</groupId>-->
-<!--            <artifactId>common-util</artifactId>-->
-<!--            <version>1.0</version>-->
-<!--        </dependency>-->
+
+        <dependency>
+            <groupId>com.shangyitong</groupId>
+            <artifactId>common_util</artifactId>
+            <version>1.0</version>
+        </dependency>
+
         <!-- redis -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
