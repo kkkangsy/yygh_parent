@@ -1,10 +1,14 @@
 package com.shangyitong.yygh.hosp.service;
 
 import com.shangyitong.yygh.common.result.Result;
+import com.shangyitong.yygh.model.hosp.Hospital;
 
 import java.util.Map;
 
 public interface HospitalService {
 
-    public void save(Map<String, Object> objectMap);
+    void save(Map<String, Object> objectMap);
+
+    Hospital getByHospCode(String hosCode);
+
 }
