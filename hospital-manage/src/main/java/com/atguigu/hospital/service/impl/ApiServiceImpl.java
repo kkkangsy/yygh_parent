@@ -9,6 +9,7 @@ import com.atguigu.hospital.model.Schedule;
 import com.atguigu.hospital.service.ApiService;
 import com.atguigu.hospital.util.BeanUtils;
 import com.atguigu.hospital.util.HttpRequestHelper;
+import com.atguigu.hospital.util.MD5;
 import com.atguigu.hospital.util.YyghException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
@@ -40,8 +41,8 @@ public class ApiServiceImpl implements ApiService {
     @Autowired
     private HospitalSetMapper hospitalSetMapper;
 
-    @Autowired
-    private ApiService apiService;
+//    @Autowired
+//    private ApiService apiService;
 
     @Value("classpath:hospital.json")
     private Resource hospitalResource;
@@ -99,7 +100,7 @@ public class ApiServiceImpl implements ApiService {
         paramMap.put("bookingRule",bookingRule.toJSONString());
 
         paramMap.put("timestamp", HttpRequestHelper.getTimestamp());
-        paramMap.put("sign", HttpRequestHelper.getSign(paramMap, this.getSignKey()));
+        paramMap.put("sign", MD5.encrypt(this.getSignKey()));
 
         JSONObject respone = HttpRequestHelper.sendRequest(paramMap,this.getApiUrl()+"/api/hosp/saveHospital");
         System.out.println(respone.toJSONString());
@@ -337,7 +338,7 @@ public class ApiServiceImpl implements ApiService {
             paramMap.put("bookingRule",JSONObject.toJSONString(bookingRuleMap));
 
             paramMap.put("timestamp", HttpRequestHelper.getTimestamp());
-            paramMap.put("sign", HttpRequestHelper.getSign(paramMap, apiService.getSignKey()));
+            paramMap.put("sign", HttpRequestHelper.getSign(paramMap, this.getSignKey()));
 
             JSONObject respone = HttpRequestHelper.sendRequest(paramMap,"http://localhost/api/hosp/saveHospital");
             System.out.println(respone.toJSONString());
