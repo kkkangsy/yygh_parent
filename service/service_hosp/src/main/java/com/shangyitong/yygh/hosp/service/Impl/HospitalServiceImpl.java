@@ -1,11 +1,16 @@
 package com.shangyitong.yygh.hosp.service.Impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.shangyitong.cmn.client.DictFeignClient;
+import com.shangyitong.yygh.enums.DictEnum;
 import com.shangyitong.yygh.hosp.repository.HospitalRepository;
 import com.shangyitong.yygh.hosp.service.HospitalService;
 import com.shangyitong.yygh.model.hosp.Hospital;
+import com.shangyitong.yygh.vo.hosp.HospitalQueryVo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -17,6 +22,9 @@ public class HospitalServiceImpl implements HospitalService {
 
     @Autowired
     private HospitalRepository hospitalRepository;
+
+    @Autowired
+    private DictFeignClient dictFeignClient;
 
     @Override
     public void save(Map<String, Object> objectMap){
@@ -48,4 +56,39 @@ public class HospitalServiceImpl implements HospitalService {
         Hospital hospital = hospitalRepository.getHospitalByHoscode(hosCode);
         return hospital;
     }
+
+    @Override
+    public Page<Hospital> selectPage(Integer page, Integer limit, HospitalQueryVo hospitalQueryVo) {
+        Pageable pageable = PageRequest.of(page-1,limit);
+
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
+                .withIgnoreCase(true);
+
+        Hospital hospital =new Hospital();
+        BeanUtils.copyProperties(hospitalQueryVo,hospital);
+        hospital.setIsDeleted(0);
+
+        Example<Hospital> example =Example.of(hospital,matcher);
+        Page<Hospital> hospitals = hospitalRepository.findAll(example, pageable);
+
+        //获取查询list集合，遍历进行医院等级封装
+        hospitals.getContent().stream().forEach(hosp->{
+           this.setHospHosTypeAndpLocation(hosp);
+        });
+
+        return hospitals;
+    }
+
+    private Hospital setHospHosTypeAndpLocation(Hospital hosp) {
+        String hosType = dictFeignClient.getName(DictEnum.HOSTYPE.getDictCode(),hosp.getHostype());
+        String hosProvinceCode = dictFeignClient.getName(hosp.getProvinceCode());
+        String hosCityCode = dictFeignClient.getName(hosp.getCityCode());
+        String hosDistrictCode = dictFeignClient.getName(hosp.getDistrictCode());
+        hosp.getParam().put("fullAddress",hosProvinceCode+hosCityCode+hosDistrictCode);
+        hosp.getParam().put("hosType",hosType);
+        return hosp;
+    }
+
+
 }

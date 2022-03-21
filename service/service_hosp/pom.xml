@@ -25,6 +25,13 @@
             <artifactId>spring-data-mongodb</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.shangyitong</groupId>
+            <artifactId>service_cmn_client</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>

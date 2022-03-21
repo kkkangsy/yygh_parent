@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -83,4 +84,41 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict>
         EasyExcel.read(file.getInputStream(),DictEeVo.class,new DictListener(baseMapper)).sheet().doRead();
         return null;
     }
+
+    @Override
+    public String getNameByParentDictCodeAndValue(String parentDictCode, String value) {
+        if(StringUtils.isEmpty(parentDictCode)){
+            QueryWrapper<Dict> wrapper =new QueryWrapper<>();
+            wrapper.eq("value",value);
+            Dict dict = baseMapper.selectOne(wrapper);
+            return dict.getName();
+        }else{
+            Dict parentDict = this.getDictByDictCode(parentDictCode);
+            Long parentId = parentDict.getId();
+
+            //根据parentId与value共同查询
+            QueryWrapper<Dict> wrapper =new QueryWrapper<>();
+            wrapper.eq("parent_id",parentId);
+            wrapper.eq("value",value);
+            Dict dict = baseMapper.selectOne(wrapper);
+            return dict.getName();
+        }
+    }
+
+    @Override
+    public List<Dict> findByDictCode(String dictCode) {
+        Dict parentDict = this.getDictByDictCode(dictCode);
+        if(null == parentDict) return null;
+        //根据id获取子节点
+        List<Dict> dictList = this.findChildData(parentDict.getId());
+        return dictList;
+    }
+
+    private Dict getDictByDictCode(String parentDictCode){
+        QueryWrapper<Dict> wrapper =new QueryWrapper<>();
+        wrapper.eq("dict_code",parentDictCode);
+        Dict parentDict = baseMapper.selectOne(wrapper);
+        return parentDict;
+    }
+
 }
