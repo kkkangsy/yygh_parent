@@ -9,7 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @ComponentScan(basePackages = "com.shangyitong")
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = "com.shangyitong")
+@EnableFeignClients(basePackages = {"com.shangyitong"})
 public class ServiceHospApplication {
     public static void main(String[] args) {
         SpringApplication.run(ServiceHospApplication.class, args);

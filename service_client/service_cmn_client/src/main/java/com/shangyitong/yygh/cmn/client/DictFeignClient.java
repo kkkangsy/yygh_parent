@@ -1,4 +1,4 @@
-package com.shangyitong.cmn.client;
+package com.shangyitong.yygh.cmn.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Repository;
