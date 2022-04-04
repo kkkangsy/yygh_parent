@@ -5,14 +5,15 @@ import com.shangyitong.yygh.hosp.repository.DepartmentRepository;
 import com.shangyitong.yygh.hosp.service.DepartmentService;
 import com.shangyitong.yygh.model.hosp.Department;
 import com.shangyitong.yygh.vo.hosp.DepartmentQueryVo;
+import com.shangyitong.yygh.vo.hosp.DepartmentVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -69,6 +70,50 @@ public class DepartmentServiceImpl implements DepartmentService {
         if(null != targetDepartment){
             departmentRepository.deleteById(targetDepartment.getId());
         }
+    }
+
+    @Override
+    public List<DepartmentVo> findDeptTree(String hoscode) {
+        List<DepartmentVo> list =new ArrayList<>();
+
+        //查询医院的所有科室信息
+        Department departmentQuery =new Department();
+        departmentQuery.setHoscode(hoscode);
+        Example example = Example.of(departmentQuery);
+        List<Department> departmentList = departmentRepository.findAll(example);
+
+        //根据大科室编号，获取每个大科室下面的子级科室<大科室编号，大科室下的所有子级科室>
+        Map<String, List<Department>> departmentListMap =
+                departmentList.stream().collect(Collectors.groupingBy(Department::getBigcode));
+
+        for (Map.Entry<String, List<Department>> entry: departmentListMap.entrySet()) {
+            String bigCode = entry.getKey();
+            List<Department> subDepList = entry.getValue();
+            DepartmentVo departmentVo = new DepartmentVo();
+            departmentVo.setDepcode(bigCode);
+            departmentVo.setDepname(subDepList.get(0).getBigname());
+            List<DepartmentVo> childList =new ArrayList<>();
+
+            for(Department subDep:subDepList){
+                DepartmentVo subDepartmentVo = new DepartmentVo();
+                subDepartmentVo.setDepcode(subDep.getDepcode());
+                subDepartmentVo.setDepname(subDep.getDepname());
+                childList.add(subDepartmentVo);
+            }
+            departmentVo.setChildren(childList);
+            list.add(departmentVo);
+
+        }
+        return list;
+    }
+
+    @Override
+    public String getDepName(String hoscode, String depcode) {
+        Department targetDepartment = departmentRepository.getDepartmentByHoscodeAndDepcode(hoscode,depcode);
+        if(Objects.nonNull(targetDepartment)){
+            return targetDepartment.getDepname();
+        }
+        return null;
     }
 
 
